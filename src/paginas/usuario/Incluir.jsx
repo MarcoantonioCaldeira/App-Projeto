@@ -10,6 +10,7 @@ import ShowError from "../../components/mensagens/ShowError";
 import Mensagem from "../../components/mensagens/Mensagem";
 import useValidationFormUsuario from "../../hook/useValidationFormUsuario";
 import Alert from "../../components/mensagens/Alert";
+import { deleteFoto } from "../../service/FotoService";
 
 const Incluir = () => {
 
@@ -106,6 +107,21 @@ const Incluir = () => {
 
 
 
+  const excluirFoto = async(event) => {
+    e.preventDefault();
+    let formData = new FormData();
+    formData.append("id",0);
+    formData.append("nomeArquivo", foto);
+    const response = await deleteFoto(formData)
+    .catch((error)=>{
+      ShowError(error.code)
+     
+    });
+    console.log(response)
+    uploadImage.current.value=null;
+    setFoto(null);
+  }
+
 
   const closeMensagem = () =>{
     setShow(false);
@@ -143,10 +159,14 @@ const Incluir = () => {
                    <div className="card-body">
                        <div className="d-flex flex-column align-items-center text-center">
                              
-                          <img src={ foto===null
+                          <img 
+                            src={ foto===null
                                ? DEFAULT_IMAGEM
                                : `${SERVIDOR_GET_IMAGEM}${foto}`  
-                             } alt="foto do usuário"
+                             } 
+                             alt="foto do usuário"
+                             ref={uploadImage}
+                             onClick={excluirFoto}
                            /> 
                            <div className="mt-3 col-xs-12 col-sm-12 col-md-10">
                               <div className="fileInput">
@@ -163,13 +183,10 @@ const Incluir = () => {
                                      <FaIcons.FaUpload size={BUTTON_SIZE} />
                                     </i>    
 
-                                 </button>  
-                              
-                              </div> 
-                            
-                            </div> 
-                        </div> 
-
+                                 </button>           
+                              </div>         
+                          </div> 
+                      </div> 
                    </div>
                  </div>   
 

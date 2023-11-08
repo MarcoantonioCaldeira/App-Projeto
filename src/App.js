@@ -7,7 +7,7 @@ import { Fragment } from 'react';
 import Dashboard from './paginas/dashboard/Dashboard';
 
 
-function App() {
+function App() { 
   return (
      <Fragment> 
         <BrowserRouter>

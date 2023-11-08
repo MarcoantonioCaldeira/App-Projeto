@@ -9,7 +9,7 @@ export const USER_PHOTO = USER;
 export const DEFAULT_IMAGEM = IMAGEM;
 export const DEFAULT_IMAGEM_THUMBNAIL = IMAGEM_THUMBNAIL;
 
-export const SERVIDOR_GET_IMAGEM = SERVIDOR+'/foto';
+export const SERVIDOR_GET_IMAGEM = SERVIDOR+'/filename/';
 
 export const BUTTON_SIZE = 20
 export const BUTTON_SIZE_SHOW_MESSAGE = 30
