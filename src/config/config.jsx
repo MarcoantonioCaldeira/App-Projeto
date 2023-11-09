@@ -16,7 +16,8 @@ export const BUTTON_SIZE_SHOW_MESSAGE = 30
 
 export const HTTP_STATUS_OK = 200;
 export const HTTP_STATUS_BAD_REQUEST = 400;
-
+export const HTTP_STATUS_PRECONDITION_FAILED = 412;
+export const HTTP_STATUS_INTERNAL_SERVER_ERROR = 500;
 
 
 

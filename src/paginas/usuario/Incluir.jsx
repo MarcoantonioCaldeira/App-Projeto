@@ -2,7 +2,7 @@ import React, { Fragment, useState } from "react";
 import ShowMensagem from "../../components/mensagens/ShowMensagem";
 import * as FaIcons from "react-icons/fa";
 import * as MdIcons from "react-icons/md";
-import { BUTTON_SIZE, BUTTON_SIZE_SHOW_MESSAGE, DEFAULT_IMAGEM, HTTP_STATUS_BAD_REQUEST, HTTP_STATUS_OK, SERVIDOR_GET_IMAGEM } from "../../config/config";
+import { BUTTON_SIZE, BUTTON_SIZE_SHOW_MESSAGE, DEFAULT_IMAGEM, HTTP_STATUS_BAD_REQUEST, HTTP_STATUS_OK, HTTP_STATUS_PRECONDITION_FAILED, SERVIDOR_GET_IMAGEM } from "../../config/config";
 import { Link } from "react-router-dom";
 import { ERRORS, USUARIO } from "./Usuario";
 import { incluirUsuario } from "../../service/UsuarioService";
@@ -23,6 +23,7 @@ const Incluir = () => {
       validateAll,
       validBlurInput,
       isFormValid,
+      validarUsuarioFromServer
     } = useValidationFormUsuario(USUARIO, ERRORS);   
 
     const [foto, setFoto] = useState(null);
@@ -38,22 +39,26 @@ const Incluir = () => {
            const response = await incluirUsuario(usuario)
             .catch((error)=> {
             ShowError(error.code) 
-            if (error.response?.data.status >= HTTP_STATUS_BAD_REQUEST){
+            const { status, mensagem } = error.response;
 
+            if (status === HTTP_STATUS_BAD_REQUEST){
+              showMenssage("danger", mensagem, true);
+            }else if(status === HTTP_STATUS_PRECONDITION_FAILED){
+              showMenssage("danger", mensagem, true);
+              erros = validarUsuarioFromServer(error.response.data.fields);
+              setErrors(...erros);
             }
+
         });
         
-        if (response.data.status === HTTP_STATUS_OK){
-            setMensagem('Usuário cadastrado no sistema!');
-            setShow(true);
-            setTipo('success');  
+        const {status, mensagem} = response.data;
+
+        if (status === HTTP_STATUS_CREATED){
+            ShowMensagem("sucess", mensagem, true) 
         } else {
           setMensagem('Erro no cadastrado do usuário no sistema!');
-          setShow(true);
-          setTipo('danger');
-        }
-
-        console.log(response);
+          setUsuario(USUARIO)
+        };
 
      } else {
         setMensagem('Informe os dados do usuário corretamente!');
@@ -70,7 +75,7 @@ const Incluir = () => {
         let erros = validBlurInput(input.name);
         if (!isValid(erros)){
           setErrors({...erros})
-          setMensagem('Informe os dados do usuário corretamente!');
+          setMensagem("danger", "Informe os dados do usuario corretamente");
           setShow(true);
           setTipo('danger');
         }
@@ -115,10 +120,24 @@ const Incluir = () => {
     const response = await deleteFoto(formData)
     .catch((error)=>{
       ShowError(error.code)
-     
+      const { status, mensagem } = error.response;
+
+      if (status === HTTP_STATUS_BAD_REQUEST){
+              showMenssage("danger", mensagem, true);
+            }else if(status === HTTP_STATUS_PRECONDITION_FAILED){
+              showMenssage("danger", mensagem, true);
+            }
     });
-    console.log(response)
-    uploadImage.current.value=null;
+    const { status, mensagem } = error.response;
+    if (status === HTTP_STATUS_BAD_REQUEST){
+        setFoto(null);
+        currentType.current.value = "";
+        nomeFoto.current.value = "";
+        uploadImage.current.value=null;
+        showMenssage("sucess", mensagem, true);
+        
+    }
+   
     setFoto(null);
   }
 
@@ -127,7 +146,15 @@ const Incluir = () => {
     setShow(false);
     setTipo('');
     setMensagem('');
-  }  
+  } 
+
+
+  const showMenssage = (tipo, mensagem, show) => {
+    setShow(show);
+    setTipo(tipo);
+    setMensagem(mensagem);
+
+  } 
 
   return (
     <Fragment>

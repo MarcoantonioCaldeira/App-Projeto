@@ -96,7 +96,22 @@ const useValidationFormUsuario = (USUARIO, ERRORS) => {
 
 
     const validarUsuarioFromServer = ( fields ) => {
-
+        let errors = errors;
+        for(let i = 0; i < fields.length; i++){
+            if(fields[i].nome === "username"){
+                errors.username = fields[i].userMessage;
+            }
+            if(fields[i].email === "email"){
+                errors.email = fields[i].userMessage;
+            }
+            if(fields[i].password === "password"){
+                errors.password = fields[i].userMessage;
+            }
+            if(fields[i].confirmePassword === "confirmePassword"){
+                errors.confirmePassword = fields[i].userMessage;
+            }
+        }
+        return errors
     } 
 
 
@@ -112,6 +127,7 @@ const useValidationFormUsuario = (USUARIO, ERRORS) => {
         validateAll,
         validBlurInput,
         isFormValid,
+        validarUsuarioFromServer
     }
 }
 
